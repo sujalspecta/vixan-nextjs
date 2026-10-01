@@ -2,195 +2,251 @@ import { gsap } from "gsap";
 import { SplitText } from "@/plugins";
 
 const animationTitle = () => {
-	if (typeof window !== "undefined") {
-		const splitTitleLines = gsap.utils.toArray(".anim_heading_title");
-		splitTitleLines.forEach((splitTextLine) => {
-			const tl = gsap.timeline({
-				scrollTrigger: {
-					trigger: splitTextLine,
-					start: "top 90%",
-					end: "bottom 60%",
-					scrub: false,
-					markers: false,
-					toggleActions: "play none none none",
-				},
-			});
+	if (typeof window === "undefined") return () => {};
 
-			const itemSplitted = new SplitText(splitTextLine, {
-				type: "words, lines",
-			});
-			gsap.set(splitTextLine, { perspective: 400 });
-			itemSplitted.split({ type: "lines" });
-			tl.from(itemSplitted.lines, {
-				duration: 1,
-				delay: 0.3,
-				opacity: 0,
-				rotationX: -80,
-				force3D: true,
-				transformOrigin: "top center -50",
+	const splitInstances = [];
+
+	// --------------------------------------------------
+	// Heading title animation
+	// --------------------------------------------------
+	const splitTitleLines = gsap.utils.toArray(".anim_heading_title");
+
+	splitTitleLines.forEach((splitTextLine) => {
+		if (!splitTextLine) return;
+
+		const itemSplitted = new SplitText(splitTextLine, {
+			type: "words, lines",
+		});
+
+		splitInstances.push(itemSplitted);
+
+		itemSplitted.split({
+			type: "lines",
+		});
+
+		gsap.set(splitTextLine, {
+			perspective: 400,
+		});
+
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: splitTextLine,
+				start: "top 90%",
+				end: "bottom 60%",
+				scrub: false,
+				markers: false,
+				toggleActions: "play none none none",
+			},
+		});
+
+		tl.from(itemSplitted.lines, {
+			duration: 1,
+			delay: 0.3,
+			opacity: 0,
+			rotationX: -80,
+			force3D: true,
+			transformOrigin: "top center -50",
+			stagger: 0.1,
+		});
+	});
+
+	// --------------------------------------------------
+	// Character writing animation
+	// --------------------------------------------------
+	const textTextWrittings = gsap.utils.toArray(
+		".anim_text_writting"
+	);
+
+	textTextWrittings.forEach((splitTextLine) => {
+		if (!splitTextLine) return;
+
+		const textCharsWritting = new SplitText(splitTextLine, {
+			type: "chars, words",
+		});
+
+		splitInstances.push(textCharsWritting);
+
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: splitTextLine,
+				start: "top 90%",
+				end: "bottom 60%",
+				scrub: false,
+				markers: false,
+				toggleActions: "play none none none",
+			},
+		});
+
+		tl.from(
+			textCharsWritting.chars,
+			{
+				duration: 0.5,
+				x: 100,
+				autoAlpha: 0,
 				stagger: 0.1,
-			});
+			},
+			"-=1"
+		);
+	});
+
+	// --------------------------------------------------
+	// Word writing animation
+	// --------------------------------------------------
+	const textWordWrittings = gsap.utils.toArray(
+		".anim_word_writting"
+	);
+
+	textWordWrittings.forEach((splitWordLine) => {
+		if (!splitWordLine) return;
+
+		const textWordWritting = new SplitText(splitWordLine, {
+			type: "words",
 		});
-	}
 
-	if (typeof window !== "undefined") {
-		const textTextWrittings = gsap.utils.toArray(".anim_text_writting");
-		textTextWrittings.forEach((splitTextLine) => {
-			const tl = gsap.timeline({
-				scrollTrigger: {
-					trigger: splitTextLine,
-					start: "top 90%",
-					end: "bottom 60%",
-					scrub: false,
-					markers: false,
-					toggleActions: "play none none none",
-				},
-			});
-			const textCharsWritting = new SplitText(splitTextLine, {
-				type: "chars, words",
-			});
-			tl.from(
-				textCharsWritting.chars,
-				{
-					duration: 0.5,
-					x: 100,
-					autoAlpha: 0,
-					stagger: 0.1,
-				},
-				"-=1"
-			);
+		splitInstances.push(textWordWritting);
+
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: splitWordLine,
+				start: "top 90%",
+				end: "bottom 60%",
+				scrub: false,
+				markers: false,
+				toggleActions: "play none none none",
+			},
 		});
-	}
 
-	if (typeof window !== "undefined") {
-		const textWordWrittings = gsap.utils.toArray(".anim_word_writting");
-
-		textWordWrittings.forEach((splitWordLine) => {
-			const tl = gsap.timeline({
-				scrollTrigger: {
-					trigger: splitWordLine,
-					start: "top 90%",
-					end: "bottom 60%",
-					scrub: false,
-					markers: false,
-					toggleActions: "play none none none",
-				},
-			});
-			const textWordWritting = new SplitText(splitWordLine, {
-				type: "words",
-			});
-			tl.from(
-				textWordWritting.words,
-				{
-					duration: 0.7,
-					x: 100,
-					delay: 0.5,
-					autoAlpha: 0,
-					stagger: 0.2,
-				},
-				"-=1"
-			);
-		});
-	}
-
-	if (typeof window !== "undefined") {
-		// paragraph animation
-		const splitTextLines = gsap.utils.toArray(".anim_text");
-
-		splitTextLines.forEach((splitTextLine) => {
-			const tl = gsap.timeline({
-				scrollTrigger: {
-					trigger: splitTextLine,
-					start: "top 90%",
-					duration: 2,
-					end: "bottom 60%",
-					scrub: false,
-					markers: false,
-					toggleActions: "play none none none",
-				},
-			});
-
-			const itemSplitted = new SplitText(splitTextLine, {
-				type: "lines",
-			});
-			gsap.set(splitTextLine, {
-				perspective: 400,
-			});
-			itemSplitted.split({
-				type: "lines",
-			});
-			tl.from(itemSplitted.lines, {
-				duration: 1,
+		tl.from(
+			textWordWritting.words,
+			{
+				duration: 0.7,
+				x: 100,
 				delay: 0.5,
-				opacity: 0,
-				rotationX: -80,
-				force3D: true,
-				transformOrigin: "top center -50",
-				stagger: 0.1,
-			});
-		});
-	}
+				autoAlpha: 0,
+				stagger: 0.2,
+			},
+			"-=1"
+		);
+	});
 
-	if (typeof window !== "undefined") {
-		const blogAnim = gsap.utils.toArray(".anim_blog");
+	// --------------------------------------------------
+	// Paragraph animation
+	// --------------------------------------------------
+	const splitTextLines = gsap.utils.toArray(".anim_text");
+
+	splitTextLines.forEach((splitTextLine) => {
+		if (!splitTextLine) return;
+
+		const itemSplitted = new SplitText(splitTextLine, {
+			type: "lines",
+		});
+
+		splitInstances.push(itemSplitted);
+
+		itemSplitted.split({
+			type: "lines",
+		});
+
+		gsap.set(splitTextLine, {
+			perspective: 400,
+		});
+
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: splitTextLine,
+				start: "top 90%",
+				end: "bottom 60%",
+				scrub: false,
+				markers: false,
+				toggleActions: "play none none none",
+			},
+		});
+
+		tl.from(itemSplitted.lines, {
+			duration: 1,
+			delay: 0.5,
+			opacity: 0,
+			rotationX: -80,
+			force3D: true,
+			transformOrigin: "top center -50",
+			stagger: 0.1,
+		});
+	});
+
+	// --------------------------------------------------
+	// Blog animation
+	// --------------------------------------------------
+	const blogAnim = gsap.utils.toArray(".anim_blog");
+
+	if (blogAnim.length) {
 		gsap.set(blogAnim, {
 			opacity: 0,
 			y: -100,
 			x: -100,
 		});
 
-		if (blogAnim) {
-			blogAnim.forEach((item, i) => {
-				gsap.to(item, {
-					scrollTrigger: {
-						trigger: item,
-						start: "top center+=200",
-						markers: false,
-					},
-					opacity: 1,
-					x: -0,
-					y: -0,
-					ease: "power2.out",
-					duration: 2,
-					stagger: 0.5,
-				});
-			});
-		}
-	}
-
-	if (typeof window !== "undefined") {
-		const cs_startup_agency = gsap.utils.toArray(".cs_startup_agency.cs_card");
-		cs_startup_agency.forEach((cs_startup) => {
-			gsap.set(cs_startup, {
-				opacity: 0,
-				x: +100,
-			});
-
-			gsap.to(cs_startup, {
+		blogAnim.forEach((item) => {
+			gsap.to(item, {
 				scrollTrigger: {
-					trigger: cs_startup,
+					trigger: item,
 					start: "top center+=200",
 					markers: false,
 				},
 				opacity: 1,
-				x: -0,
+				x: 0,
+				y: 0,
 				ease: "power2.out",
 				duration: 2,
-				stagger: {
-					each: 0.4,
-				},
 			});
 		});
 	}
 
-	if (typeof window !== "undefined") {
-		const aminTextUpanddowns = gsap.utils.toArray(".anim_text_upanddowns");
-		const aminTextUpanddownChar = new SplitText(aminTextUpanddowns, {
-			type: "chars",
+	// --------------------------------------------------
+	// Startup agency cards
+	// --------------------------------------------------
+	const cs_startup_agency = gsap.utils.toArray(
+		".cs_startup_agency.cs_card"
+	);
+
+	cs_startup_agency.forEach((cs_startup) => {
+		gsap.set(cs_startup, {
+			opacity: 0,
+			x: 100,
 		});
+
+		gsap.to(cs_startup, {
+			scrollTrigger: {
+				trigger: cs_startup,
+				start: "top center+=200",
+				markers: false,
+			},
+			opacity: 1,
+			x: 0,
+			ease: "power2.out",
+			duration: 2,
+		});
+	});
+
+	// --------------------------------------------------
+	// Text up/down character animation
+	// --------------------------------------------------
+	const aminTextUpanddowns = gsap.utils.toArray(
+		".anim_text_upanddowns"
+	);
+
+	if (aminTextUpanddowns.length) {
+		const aminTextUpanddownChar = new SplitText(
+			aminTextUpanddowns,
+			{
+				type: "chars",
+			}
+		);
+
+		splitInstances.push(aminTextUpanddownChar);
+
 		const textUpanddown = gsap.timeline({
 			scrollTrigger: {
-				trigger: aminTextUpanddowns,
+				trigger: aminTextUpanddowns[0],
 				start: "top 90%",
 				end: "bottom 60%",
 				scrub: false,
@@ -204,185 +260,233 @@ const animationTitle = () => {
 			opacity: 0,
 			delay: 0.5,
 			scale: 1.2,
-			stagger: 0.5,
+			stagger: 0.05,
 			y: 50,
 			rotationX: 100,
 			transformOrigin: "0% 30% -30",
 			ease: "elastic",
-			stagger: 0.05,
 		});
 	}
 
-	if (typeof window !== "undefined") {
-		const divShowsZoom = gsap.utils.toArray(".anim_div_ShowZoom");
-		divShowsZoom.forEach((showsZoom) => {
-			gsap.set(showsZoom, {
-				opacity: 0,
-				scale: 0,
-			});
+	// --------------------------------------------------
+	// Zoom animation
+	// --------------------------------------------------
+	const divShowsZoom = gsap.utils.toArray(
+		".anim_div_ShowZoom"
+	);
 
-			gsap.to(showsZoom, {
-				scrollTrigger: {
-					trigger: showsZoom,
-					start: "top 90%",
-					end: "bottom 60%",
-					markers: false,
-				},
-				opacity: 1,
-				scale: 1,
-				delay: 0.5,
-				ease: "power3.out",
-				duration: 1,
-				stagger: 0.5,
-			});
+	divShowsZoom.forEach((showsZoom) => {
+		gsap.set(showsZoom, {
+			opacity: 0,
+			scale: 0,
 		});
-	}
 
-	if (typeof window !== "undefined") {
-		const divShowsLeftSide = gsap.utils.toArray(".anim_div_ShowLeftSide");
-		divShowsLeftSide.forEach((showsLeft) => {
-			gsap.set(showsLeft, {
-				opacity: 0,
-				x: -100,
-			});
-
-			gsap.to(showsLeft, {
-				scrollTrigger: {
-					trigger: showsLeft,
-					start: "top 90%",
-					end: "bottom 60%",
-					markers: false,
-				},
-				opacity: 1,
-				x: -0,
-				ease: "power2.out",
-				duration: 2,
-				stagger: 0.5,
-			});
+		gsap.to(showsZoom, {
+			scrollTrigger: {
+				trigger: showsZoom,
+				start: "top 90%",
+				end: "bottom 60%",
+				markers: false,
+			},
+			opacity: 1,
+			scale: 1,
+			delay: 0.5,
+			ease: "power3.out",
+			duration: 1,
 		});
-	}
+	});
 
-	if (typeof window !== "undefined") {
-		const divShowsRightSide = gsap.utils.toArray(".anim_div_ShowRightSide");
-		divShowsRightSide.forEach((showsRight) => {
-			gsap.set(showsRight, {
-				opacity: 0,
-				x: +100,
-			});
+	// --------------------------------------------------
+	// Left side animation
+	// --------------------------------------------------
+	const divShowsLeftSide = gsap.utils.toArray(
+		".anim_div_ShowLeftSide"
+	);
 
-			gsap.to(showsRight, {
-				scrollTrigger: {
-					trigger: showsRight,
-					start: "top 90%",
-					end: "bottom 60%",
-					markers: false,
-				},
-				opacity: 1,
-				x: -0,
-				ease: "power2.out",
-				duration: 2,
-				stagger: 0.5,
-			});
+	divShowsLeftSide.forEach((showsLeft) => {
+		gsap.set(showsLeft, {
+			opacity: 0,
+			x: -100,
 		});
-	}
 
-	if (typeof window !== "undefined") {
-		const divShowsDowns = gsap.utils.toArray(".anim_div_ShowDowns");
-		divShowsDowns.forEach((showsDown) => {
-			gsap.set(showsDown, {
-				opacity: 0,
-				y: +100,
-			});
-
-			gsap.to(showsDown, {
-				scrollTrigger: {
-					trigger: showsDown,
-					start: "top 90%",
-					end: "bottom 60%",
-					markers: false,
-				},
-				opacity: 1,
-				y: -0,
-				ease: "power2.out",
-				duration: 2,
-				stagger: 1,
-			});
+		gsap.to(showsLeft, {
+			scrollTrigger: {
+				trigger: showsLeft,
+				start: "top 90%",
+				end: "bottom 60%",
+				markers: false,
+			},
+			opacity: 1,
+			x: 0,
+			ease: "power2.out",
+			duration: 2,
 		});
-	}
+	});
 
-	if (typeof window !== "undefined") {
-		const divShowsUps = gsap.utils.toArray(".anim_div_ShowUps");
-		divShowsUps.forEach((showsUp) => {
-			gsap.set(showsUp, {
-				opacity: 0,
-				y: -100,
-			});
+	// --------------------------------------------------
+	// Right side animation
+	// --------------------------------------------------
+	const divShowsRightSide = gsap.utils.toArray(
+		".anim_div_ShowRightSide"
+	);
 
-			gsap.to(showsUp, {
-				scrollTrigger: {
-					trigger: showsUp,
-					start: "top 90%",
-					end: "bottom 60%",
-					markers: false,
-				},
-				opacity: 1,
-				y: -0,
-				ease: "power2.out",
-				duration: 2,
-				stagger: 0.5,
-			});
+	divShowsRightSide.forEach((showsRight) => {
+		gsap.set(showsRight, {
+			opacity: 0,
+			x: 100,
 		});
-	}
 
-	if (typeof window !== "undefined") {
-		const text_anim_top = gsap.utils.toArray(".anim_text_popup");
-		text_anim_top.forEach((splitTextLine2) => {
-			const tl = gsap.timeline({
-				scrollTrigger: {
-					trigger: splitTextLine2,
-					start: "top 90%",
-					end: "bottom 60%",
-					toggleActions: "play none none none",
-				},
-			});
-
-			const itemSplitted = new SplitText(splitTextLine2, {
-					type: "words",
-				}),
-				textNumWords = itemSplitted.words.length;
-
-			gsap.delayedCall(0.05, function () {
-				for (var i = 0; i < textNumWords; i++) {
-					tl.from(
-						itemSplitted.words[i],
-						1,
-						{
-							force3D: true,
-							scale: Math.random() > 0.5 ? 0 : 2,
-							opacity: 0,
-						},
-						Math.random()
-					);
-				}
-			});
+		gsap.to(showsRight, {
+			scrollTrigger: {
+				trigger: showsRight,
+				start: "top 90%",
+				end: "bottom 60%",
+				markers: false,
+			},
+			opacity: 1,
+			x: 0,
+			ease: "power2.out",
+			duration: 2,
 		});
-	}
+	});
 
-	if (typeof window !== "undefined") {
+	// --------------------------------------------------
+	// Down animation
+	// --------------------------------------------------
+	const divShowsDowns = gsap.utils.toArray(
+		".anim_div_ShowDowns"
+	);
+
+	divShowsDowns.forEach((showsDown) => {
+		gsap.set(showsDown, {
+			opacity: 0,
+			y: 100,
+		});
+
+		gsap.to(showsDown, {
+			scrollTrigger: {
+				trigger: showsDown,
+				start: "top 90%",
+				end: "bottom 60%",
+				markers: false,
+			},
+			opacity: 1,
+			y: 0,
+			ease: "power2.out",
+			duration: 2,
+		});
+	});
+
+	// --------------------------------------------------
+	// Up animation
+	// --------------------------------------------------
+	const divShowsUps = gsap.utils.toArray(
+		".anim_div_ShowUps"
+	);
+
+	divShowsUps.forEach((showsUp) => {
+		gsap.set(showsUp, {
+			opacity: 0,
+			y: -100,
+		});
+
+		gsap.to(showsUp, {
+			scrollTrigger: {
+				trigger: showsUp,
+				start: "top 90%",
+				end: "bottom 60%",
+				markers: false,
+			},
+			opacity: 1,
+			y: 0,
+			ease: "power2.out",
+			duration: 2,
+		});
+	});
+
+	// --------------------------------------------------
+	// Popup word animation
+	// --------------------------------------------------
+	const text_anim_top = gsap.utils.toArray(
+		".anim_text_popup"
+	);
+
+	text_anim_top.forEach((splitTextLine2) => {
+		if (!splitTextLine2) return;
+
+		const tl = gsap.timeline({
+			scrollTrigger: {
+				trigger: splitTextLine2,
+				start: "top 90%",
+				end: "bottom 60%",
+				toggleActions: "play none none none",
+			},
+		});
+
+		const itemSplitted = new SplitText(splitTextLine2, {
+			type: "words",
+		});
+
+		splitInstances.push(itemSplitted);
+
+		const textNumWords = itemSplitted.words.length;
+
+		gsap.delayedCall(0.05, () => {
+			for (let i = 0; i < textNumWords; i++) {
+				tl.from(
+					itemSplitted.words[i],
+					{
+						duration: 1,
+						force3D: true,
+						scale: Math.random() > 0.5 ? 0 : 2,
+						opacity: 0,
+					},
+					Math.random()
+				);
+			}
+		});
+	});
+
+	// --------------------------------------------------
+	// Digital hero animation
+	// --------------------------------------------------
+	const mark = document.querySelector(
+		".cs_hero .anim_banner_text_left"
+	);
+
+	const eting = document.querySelector(
+		".cs_hero .anim_banner_text_right"
+	);
+
+	const cs_hero_style5_subtext = document.querySelector(
+		".cs_hero .anim_subtext"
+	);
+
+	// IMPORTANT:
+	// Only create this animation if all three elements exist.
+	if (mark && eting && cs_hero_style5_subtext) {
 		const HomeDigital = gsap.timeline({});
-		const mark = document.querySelector(".cs_hero .anim_banner_text_left");
-		const eting = document.querySelector(".cs_hero .anim_banner_text_right");
-		const cs_hero_style5_subtext = document.querySelector(".cs_hero .anim_subtext");
 
 		const split_creatives = new SplitText(mark, {
 			type: "chars,words",
 		});
+
 		const split_solutions = new SplitText(eting, {
 			type: "chars,words",
 		});
-		const split_cs_hero_style5_subtext = new SplitText(cs_hero_style5_subtext, {
-			type: "chars words",
-		});
+
+		const split_cs_hero_style5_subtext = new SplitText(
+			cs_hero_style5_subtext,
+			{
+				type: "chars,words",
+			}
+		);
+
+		splitInstances.push(
+			split_creatives,
+			split_solutions,
+			split_cs_hero_style5_subtext
+		);
 
 		HomeDigital.from(split_creatives.chars, {
 			duration: 1.2,
@@ -390,6 +494,7 @@ const animationTitle = () => {
 			autoAlpha: 0,
 			stagger: 0.05,
 		});
+
 		HomeDigital.from(
 			split_solutions.chars,
 			{
@@ -412,6 +517,25 @@ const animationTitle = () => {
 			"-=1"
 		);
 	}
+
+	// --------------------------------------------------
+	// Cleanup
+	// --------------------------------------------------
+	return () => {
+		// Revert SplitText instances
+		splitInstances.forEach((instance) => {
+			try {
+				instance.revert();
+			} catch (error) {
+				// Ignore already-reverted instances
+			}
+		});
+
+		// Kill ScrollTriggers created for these animations
+		gsap.killTweensOf(
+			".anim_heading_title, .anim_text_writting, .anim_word_writting, .anim_text, .anim_blog, .cs_startup_agency.cs_card, .anim_text_upanddowns, .anim_div_ShowZoom, .anim_div_ShowLeftSide, .anim_div_ShowRightSide, .anim_div_ShowDowns, .anim_div_ShowUps, .anim_text_popup, .cs_hero .anim_banner_text_left, .cs_hero .anim_banner_text_right, .cs_hero .anim_subtext"
+		);
+	};
 };
 
 export default animationTitle;

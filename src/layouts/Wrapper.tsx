@@ -1,7 +1,8 @@
 "use client";
 
 import { gsap } from "gsap";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
+
 import DarkLight from "@/components/common/DarkLight";
 import MouseMove from "@/components/common/MouseMove";
 import ScrollToTop from "@/components/common/ScrollToTop";
@@ -14,57 +15,97 @@ import { scrollSmother } from "@/utils/scrollSmother";
 import buttonAnimation from "@/utils/buttonAnimation";
 
 import {
-  ScrollSmoother,
-  ScrollToPlugin,
-  ScrollTrigger,
-  SplitText,
+	ScrollSmoother,
+	ScrollToPlugin,
+	ScrollTrigger,
+	SplitText,
 } from "@/plugins";
-gsap.registerPlugin(ScrollSmoother, ScrollTrigger, ScrollToPlugin, SplitText);
+
+gsap.registerPlugin(
+	ScrollSmoother,
+	ScrollTrigger,
+	ScrollToPlugin,
+	SplitText
+);
 
 if (typeof window !== "undefined") {
-  require("bootstrap/dist/js/bootstrap");
+	require("bootstrap/dist/js/bootstrap");
 }
 
 const Wrapper = ({ children }: any) => {
-  const pathname = usePathname();
+	const pathname = usePathname();
 
-  useEffect(() => {
-    // animation
-    const timer = setTimeout(() => {
-      animationCreate();
-    }, 100);
+	// --------------------------------------------------
+	// General animations
+	// --------------------------------------------------
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			animationCreate();
+		}, 100);
 
-    return () => clearTimeout(timer);
-  }, []);
+		return () => {
+			clearTimeout(timer);
+		};
+	}, []);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      ScrollSmoother.create({
-        smooth: 1.35,
-        effects: true,
-        smoothTouch: false,
-        normalizeScroll: false,
-        ignoreMobileResize: true,
-      });
-    }
-  }, [pathname]);
+	// --------------------------------------------------
+	// ScrollSmoother
+	// --------------------------------------------------
+	useEffect(() => {
+		if (typeof window === "undefined") return;
 
-  useEffect(() => {
-    buttonAnimation();
-    animationTitle();
-    scrollSmother();
+		const existingSmoother = ScrollSmoother.get();
 
-  }, [pathname]);
+		if (existingSmoother) {
+			existingSmoother.kill();
+		}
 
-  return (
-    <>
-      {children}
+		const smoother = ScrollSmoother.create({
+			smooth: 1.35,
+			effects: true,
+			smoothTouch: false,
+			normalizeScroll: false,
+			ignoreMobileResize: true,
+		});
 
-      <MouseMove />
-      <DarkLight />
-      <ScrollToTop />
-    </>
-  );
+		return () => {
+			smoother?.kill();
+		};
+	}, [pathname]);
+
+	// --------------------------------------------------
+	// Page animations
+	// --------------------------------------------------
+	useLayoutEffect(() => {
+		if (typeof window === "undefined") return;
+
+		const animationCleanup = animationTitle();
+
+		buttonAnimation();
+		scrollSmother();
+
+		return () => {
+			// Cleanup animationTitle
+			if (typeof animationCleanup === "function") {
+				animationCleanup();
+			}
+
+			// Remove ScrollTriggers belonging to the current page
+			ScrollTrigger.getAll().forEach((trigger: any) => {
+				trigger.kill();
+			});
+		};
+	}, [pathname]);
+
+	return (
+		<>
+			{children}
+
+			<MouseMove />
+			<DarkLight />
+			<ScrollToTop />
+		</>
+	);
 };
 
-export default Wrapper; 
+export default Wrapper;

@@ -235,10 +235,10 @@ const HeaderOne = () => {
 						<div className="cs_main_header_in">
 							<div className="cs_main_header_left">
 								<Link className="cs_site_branding logo-dark" href="/">
-									<Image src={logo} alt="Logo" />
+									<Image src={logo} alt="Logo" priority/>
 								</Link>
 								<Link className="cs_site_branding logo-white" href="/">
-									<Image src={Logo_white} alt="Logo" />
+									<Image src={Logo_white} alt="Logo" priority/>
 								</Link>
 							</div>
 							<div className="cs_main_header_right">
@@ -268,7 +268,7 @@ const HeaderOne = () => {
 				<div className="cs_side_header_overlay"></div>
 				<div className="cs_side_header_in">
 					<Link className="cs_site_branding" href="/">
-						<Image src={Logo_white} alt="Logo" />
+						<Image src={Logo_white} alt="Logo" priority/>
 					</Link>
 					<div className="row align-items-end">
 						<div className="col-7">
