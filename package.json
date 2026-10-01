@@ -19,7 +19,7 @@
     "react-countup": "^6.5.3",
     "react-dom": "^19.3.0",
     "react-intersection-observer": "^11.0.1",
-    "react-responsive-modal": "^7.1.0",
+    "react-responsive-modal": "^8.0.0",
     "react-use": "^17.5.0",
     "sass": "^1.70.0",
     "swiper": "^11.0.5",
